@@ -9,7 +9,7 @@ import processing.data.JSONArray;
  */
 public class metroidNetworkStation extends PApplet {
 	// our list of passages
-	String[] textList;
+	String[] textList = new String[6];
 	// our highlight list, keeping track of which indices to highlight
 	int[][] highlightList;
 	// a list keeping track of the milliseconds per each passage
@@ -38,13 +38,16 @@ public class metroidNetworkStation extends PApplet {
 
 	public void loadData(JSONArray json) {
 		json = loadJSONArray("passages.json");
-		System.out.println(json);
+//		System.out.println(json);
+		for (int i = 0; i < json.size(); i++) {
+			textList[i] = json.getJSONObject(i).getString("text");
+			System.out.println(json.getJSONObject(i).getString("text"));
+		}
 	}
 
 	@Override
 	public void draw() {
 		background(210, 100, 30, 100);
-		rect(mouseX, mouseY, 20, 20);
 	}
 
 	@Override
