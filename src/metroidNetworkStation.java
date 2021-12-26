@@ -1,9 +1,8 @@
 import peasy.PeasyCam;
 import processing.core.PApplet;
+import processing.core.PImage;
 import processing.data.JSONArray;
-
 import java.util.ArrayList;
-import java.util.Arrays;
 
 
 /**
@@ -19,13 +18,17 @@ public class metroidNetworkStation extends PApplet {
 	int[] msPerPassage = new int[6];
 	// our usual camera for 3D visualizations
 	PeasyCam cam;
+	// our text frame
+	PImage textFrame;
+	// our dialog system
+	DialogBox dialogBox;
 	public static void main(String[] args) {
 		PApplet.main(new String[]{metroidNetworkStation.class.getName()});
 	}
 
 	@Override
 	public void settings() {
-		size(640, 360);
+		size(640, 360, P3D);
 	}
 
 	@Override
@@ -40,6 +43,9 @@ public class metroidNetworkStation extends PApplet {
 	}
 
 	public void loadData(JSONArray json) {
+		// add peasycam
+		cam = new PeasyCam(this, 0, 0, 0, 500);
+
 		json = loadJSONArray("passages.json");
 //		System.out.println(json);
 		for (int i = 0; i < json.size(); i++) {
@@ -56,14 +62,24 @@ public class metroidNetworkStation extends PApplet {
 			}
 			highlightList.add(lst);
 		}
+/*
 		for (int[][] h : highlightList) {
 			System.out.println(Arrays.deepToString(h));
 		}
+*/
+		textFrame = loadImage("textFrame.png");
+
+		dialogBox = new DialogBox(this, textList, highlightList, msPerPassage,
+				textFrame);
 	}
 
 	@Override
 	public void draw() {
 		background(210, 100, 30, 100);
+
+		cam.beginHUD();
+		dialogBox.draw2DTextFrame();
+		cam.endHUD();
 	}
 
 	@Override
