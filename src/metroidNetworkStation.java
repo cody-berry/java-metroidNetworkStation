@@ -22,6 +22,16 @@ public class metroidNetworkStation extends PApplet {
 	PImage textFrame;
 	// our dialog system
 	DialogBox dialogBox;
+	// setups for our hues, saturations, and brightnesses for our blender axis
+	int red_hue = 0;
+	int red_sat = 100;
+	int blue_hue = 215;
+	int blue_sat = 80;
+	int green_hue = 90;
+	int green_sat = 90;
+	int dark = 50;
+	int light = 80;
+
 	public static void main(String[] args) {
 		PApplet.main(new String[]{metroidNetworkStation.class.getName()});
 	}
@@ -77,9 +87,35 @@ public class metroidNetworkStation extends PApplet {
 	public void draw() {
 		background(210, 100, 30, 100);
 
+		drawBlenderAxis();
 		cam.beginHUD();
 		dialogBox.draw2DTextFrame();
 		cam.endHUD();
+	}
+
+	// draws our blender axis
+	public void drawBlenderAxis() {
+		// x
+		// pos
+		stroke(red_hue, red_sat, light);
+		line(10000, 0, 0, 0, 0, 0);
+		// neg
+		stroke(red_hue, red_sat, dark);
+		line(-10000, 0, 0, 0, 0, 0);
+		// y
+		// pos
+		stroke(green_hue, green_sat, light);
+		line(0, 10000, 0, 0, 0, 0);
+		// neg
+		stroke(green_hue, green_sat, dark);
+		line(0, -10000, 0, 0, 0, 0);
+		// z
+		// pos
+		stroke(blue_hue, blue_sat, light);
+		line(0, 0, 10000, 0, 0, 0);
+		// neg
+		stroke(blue_hue, blue_sat, dark);
+		line(0, 0, -10000, 0, 0, 0);
 	}
 
 	@Override
