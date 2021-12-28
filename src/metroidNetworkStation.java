@@ -1,5 +1,6 @@
 import peasy.PeasyCam;
 import processing.core.PApplet;
+import processing.core.PFont;
 import processing.core.PImage;
 import processing.data.JSONArray;
 import java.util.ArrayList;
@@ -10,6 +11,8 @@ import java.util.ArrayList;
  * teaches us how to use Processing inside IDEA
  */
 public class metroidNetworkStation extends PApplet {
+	// our font
+	PFont font;
 	// our list of passages
 	String[] textList = new String[6];
 	// our highlight list, keeping track of which indices to highlight
@@ -55,6 +58,9 @@ public class metroidNetworkStation extends PApplet {
 	public void loadData(JSONArray json) {
 		// add peasycam
 		cam = new PeasyCam(this, 0, 0, 0, 500);
+		// our font
+		font = createFont("gigamarujr.ttf", 14);
+		textFont(font, 14);
 
 		json = loadJSONArray("passages.json");
 //		System.out.println(json);
@@ -81,6 +87,8 @@ public class metroidNetworkStation extends PApplet {
 
 		dialogBox = new DialogBox(this, textList, highlightList, msPerPassage,
 				textFrame);
+
+
 	}
 
 	@Override
@@ -90,6 +98,7 @@ public class metroidNetworkStation extends PApplet {
 		drawBlenderAxis();
 		cam.beginHUD();
 		dialogBox.draw2DTextFrame();
+		dialogBox.render();
 		cam.endHUD();
 	}
 
@@ -116,10 +125,5 @@ public class metroidNetworkStation extends PApplet {
 		// neg
 		stroke(blue_hue, blue_sat, dark);
 		line(0, 0, -10000, 0, 0, 0);
-	}
-
-	@Override
-	public void mousePressed() {
-		System.out.println(mouseX);
 	}
 }
