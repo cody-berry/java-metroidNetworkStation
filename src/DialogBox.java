@@ -12,6 +12,8 @@ public class DialogBox {
 	int currentIndex;
 	// the current advancing character
 	int currentChar;
+	// the last time we have advanced
+	int lastAdvanced;
 
 	DialogBox(PApplet app, String[] textList,
 			  ArrayList<int[][]> highlightIndices,
@@ -23,6 +25,7 @@ public class DialogBox {
 		this.app = app;
 		currentIndex = 0;
 		currentChar = 0;
+		lastAdvanced = app.millis();
 	}
 
 	// draw our text frame
@@ -81,6 +84,14 @@ public class DialogBox {
 		// if the current character is not already done, we increment it
 		if (currentChar < currentPassage.length()) {
 			currentChar++;
+		}
+		// if it has been long enough since we last advanced, we should
+		// advance now
+		int advance = msPerPassage[currentIndex];
+		if (app.millis() > advance + lastAdvanced) {
+			currentIndex++;
+			currentChar = 0;
+			lastAdvanced = app.millis();
 		}
 	}
 }
