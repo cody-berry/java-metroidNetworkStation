@@ -10,6 +10,8 @@ public class DialogBox {
 	PImage textFrame;
 	PApplet app;
 	int currentIndex;
+	// the current advancing character
+	int currentChar;
 
 	DialogBox(PApplet app, String[] textList,
 			  ArrayList<int[][]> highlightIndices,
@@ -19,7 +21,8 @@ public class DialogBox {
 		this.msPerPassage = msPerPassage;
 		this.textFrame = textFrame;
 		this.app = app;
-		this.currentIndex = 0;
+		currentIndex = 0;
+		currentChar = 0;
 	}
 
 	// draw our text frame
@@ -37,7 +40,7 @@ public class DialogBox {
 		// our positions
 		int x = leftMargin;
 		int y = topMargin;
-		for (int i = 0; i < currentPassage.length(); i++) {
+		for (int i = 0; i < currentChar; i++) {
 			// get our current character
 			char c = currentPassage.charAt(i);
 			// let's do word wrap!
@@ -66,18 +69,18 @@ public class DialogBox {
 			if (c != ' ') {
 				app.text(c, x, y);
 				x += app.textWidth(c);
-				if (wrap) {
-					x = leftMargin;
-					y += app.textAscent() + app.textDescent() + 6;
-				}
 			} else {
 
 				x += 5;
-				if (wrap) {
-					x = leftMargin;
-					y += app.textAscent() + app.textDescent() + 6;
-				}
 			}
+			if (wrap) {
+				x = leftMargin;
+				y += app.textAscent() + app.textDescent() + 6;
+			}
+		}
+		// if the current character is not already done, we increment it
+		if (currentChar < currentPassage.length()) {
+			currentChar++;
 		}
 	}
 }
