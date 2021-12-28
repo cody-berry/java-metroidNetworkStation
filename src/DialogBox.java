@@ -33,15 +33,51 @@ public class DialogBox {
 		String currentPassage = this.textList[this.currentIndex];
 		// our margins
 		int leftMargin = 70;
-		int topMargin = 260;
+		int topMargin = 280;
 		// our positions
 		int x = leftMargin;
 		int y = topMargin;
 		for (int i = 0; i < currentPassage.length(); i++) {
+			// get our current character
 			char c = currentPassage.charAt(i);
-			app.textSize(14);
-			app.text(c, x, y);
-			x += app.textWidth(c);
+			// let's do word wrap!
+			boolean wrap = false;
+			// if our current character is a space...
+			if (c == ' ') {
+				// ...we should find the rest of the passage...
+				String restOfPassage = currentPassage.substring(i+1);
+				// ...the next delimiter index...
+				int nextDelimiterIndex = restOfPassage.indexOf(' ') + i+1;
+				// ...our current word..
+				String currentWord = currentPassage.substring(i,
+						nextDelimiterIndex);
+				// ...the text width of the current word...
+				float textWidth = app.textWidth(currentWord);
+				// ...and finally, if x plus the text width of the current
+				// word is equal to an  x wrap defined below...
+				int x_wrap = app.width - leftMargin;
+				if (x + textWidth > x_wrap) {
+					wrap = true;
+				}
+			}
+			// draw our text
+			// wait, but if the character is a space, we should just increase
+			// our textwidth because then the space will be way too large!
+			if (c != ' ') {
+				app.text(c, x, y);
+				x += app.textWidth(c);
+				if (wrap) {
+					x = leftMargin;
+					y += app.textAscent() + app.textDescent() + 6;
+				}
+			} else {
+
+				x += 5;
+				if (wrap) {
+					x = leftMargin;
+					y += app.textAscent() + app.textDescent() + 6;
+				}
+			}
 		}
 	}
 }
