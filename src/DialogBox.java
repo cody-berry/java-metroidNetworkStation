@@ -1,3 +1,4 @@
+import org.jetbrains.annotations.NotNull;
 import processing.core.PApplet;
 import processing.core.PImage;
 
@@ -15,7 +16,7 @@ public class DialogBox {
 	// the last time we have advanced
 	int lastAdvanced;
 
-	DialogBox(PApplet app, String[] textList,
+	DialogBox(@NotNull PApplet app, String[] textList,
 			  ArrayList<int[][]> highlightIndices,
 			  int[] msPerPassage, PImage textFrame) {
 		this.textList = textList;
@@ -46,6 +47,17 @@ public class DialogBox {
 		for (int i = 0; i < currentChar; i++) {
 			// get our current character
 			char c = currentPassage.charAt(i);
+			// if i is one of the indices of one of our highlight tuples...
+			for (int[] h : highlightIndices.get(currentIndex)) {
+				// ...for start, we fill with yellow...
+				if (i == h[0]) {
+					app.fill(63, 60, 75);
+				}
+				// ...and finally, for end, we fill with white.
+				if (i == h[1]) {
+					app.fill(0, 0, 100);
+				}
+			}
 			// let's do word wrap!
 			boolean wrap = false;
 			// if our current character is a space...
@@ -93,5 +105,7 @@ public class DialogBox {
 			currentChar = 0;
 			lastAdvanced = app.millis();
 		}
+		// and we reset our fill.
+		app.fill(0, 0, 100);
 	}
 }
