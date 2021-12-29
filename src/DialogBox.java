@@ -105,6 +105,9 @@ public class DialogBox {
 			currentChar = 0;
 			lastAdvanced = app.millis();
 		}
+		app.fill(185, 30, 100);
+		// we need to draw our ADAM text.
+		app.text("ADAM", leftMargin-10, topMargin-25);
 		// and we reset our fill.
 		app.fill(0, 0, 100);
 	}
