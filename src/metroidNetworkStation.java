@@ -2,8 +2,14 @@ import peasy.PeasyCam;
 import processing.core.PApplet;
 import processing.core.PFont;
 import processing.core.PImage;
+import processing.core.PVector;
 import processing.data.JSONArray;
 import java.util.ArrayList;
+
+/*
+	..........  dialog system
+	**** spherical geometry
+ */
 
 
 /**
@@ -34,6 +40,14 @@ public class metroidNetworkStation extends PApplet {
 	int green_sat = 90;
 	int dark = 50;
 	int light = 80;
+	// although the before was for dialog system...
+	// ...we still need to do our spherical things.
+	// let's set up our globe, our detail, and our radius.
+
+	int detail = 32;
+	int r = 100;
+	PVector[][] globe = new PVector[detail+1][detail+1];
+
 
 	public static void main(String[] args) {
 		PApplet.main(new String[]{metroidNetworkStation.class.getName()});
@@ -42,6 +56,39 @@ public class metroidNetworkStation extends PApplet {
 	@Override
 	public void settings() {
 		size(640, 360, P3D);
+	}
+
+	// let's setup our globe
+	public void setupGlobe() {
+		// our variables, longitude, latitude, x coordinate, y coordinate,
+		// and z coordinate.
+		double φ, θ;
+		double x, y, z;
+
+		// let's rest our stroke and fill.
+		stroke(0, 0, 0);
+		fill(234, 34, 24);
+
+		// It's time to fill our 2D array with PVectors!
+		for (int i = 0; i < globe.length; i++) {
+			// let's define our longitude here!
+			// φ ranges from 0 to TAU.
+			φ = map(i, 0, globe.length-1, 0, PI);
+			for (int j = 0; j < globe.length; j++) {
+				// let's define our latitude here!
+				// θ ranges from 0 to PI.
+				θ = map(j, 0, globe[i].length-1, 0, PI);
+
+				// now we can use our formulas to compute our x, y, and z
+				// coordinates.
+				x = r*sin((float) φ)*cos((float) θ);
+				y = r*sin((float) φ)*sin((float) θ);
+				z = r*cos((float) φ);
+
+				// Now we can set our vectors to globe[i][j].
+				globe[i][j] = new PVector((float) x, (float) y, (float) z);
+			}
+		}
 	}
 
 	@Override
@@ -53,6 +100,7 @@ public class metroidNetworkStation extends PApplet {
 		// function, and make the way back out.
 		JSONArray json = null;
 		loadData(json);
+		setupGlobe();
 	}
 
 	public void loadData(JSONArray json) {
@@ -91,6 +139,17 @@ public class metroidNetworkStation extends PApplet {
 
 	}
 
+	// after that big setup, now we need to display our globe
+	public void displayGlobe() {
+		for (int i = 0; i < globe.length; i++) {
+			for (int j = 0; j < globe[i].length; j++) {
+				// now we can draw a point there
+				PVector pos = globe[i][j];
+				point(pos.x, pos.y, pos.z);
+			}
+		}
+	}
+
 	@Override
 	public void draw() {
 		background(210, 100, 30, 100);
@@ -100,6 +159,9 @@ public class metroidNetworkStation extends PApplet {
 		dialogBox.draw2DTextFrame();
 		dialogBox.render();
 		cam.endHUD();
+		// now that we've set up our globe, we can iterate through it to get
+		// points
+		displayGlobe();
 	}
 
 	// draws our blender axis
