@@ -66,7 +66,7 @@ public class metroidNetworkStation extends PApplet {
 		double x, y, z;
 
 		// let's rest our stroke and fill.
-		stroke(0, 0, 0);
+		stroke(234, 34, 24);
 		fill(234, 34, 24);
 
 		// It's time to fill our 2D array with PVectors!
@@ -154,10 +154,39 @@ public class metroidNetworkStation extends PApplet {
 				vertex(v3.x, v3.y, v3.z);
 				vertex(v4.x, v4.y, v4.z);
 				endShape(CLOSE);
+
+				// we can draw our pyramids now
+				// after filling with the right color
+				fill(184, 57, 95);
+				stroke(184, 57, 95);
+				beginShape();
+				vertex(v1.x, v1.y, v1.z);
+				vertex(0, 0, 0);
+				vertex(v2.x, v2.y, v2.z);
+				endShape(CLOSE);
+				beginShape();
+				vertex(v2.x, v2.y, v2.z);
+				vertex(0, 0, 0);
+				vertex(v3.x, v3.y, v3.z);
+				endShape(CLOSE);
+				beginShape();
+				vertex(v3.x, v3.y, v3.z);
+				vertex(0, 0, 0);
+				vertex(v4.x, v4.y, v4.z);
+				endShape(CLOSE);
+				beginShape();
+				vertex(v4.x, v4.y, v4.z);
+				vertex(0, 0, 0);
+				vertex(v1.x, v1.y, v1.z);
+				endShape(CLOSE);
+
+				// and then we should reset our fill and stroke
+				fill(210, 100, 20);
 			}
 		}
 		// this doesn't display a circle at the back, though. we'll add that
 		// in Adam.
+
 	}
 
 	@Override
