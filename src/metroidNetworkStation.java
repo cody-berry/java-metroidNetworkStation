@@ -133,21 +133,31 @@ public class metroidNetworkStation extends PApplet {
 */
 		textFrame = loadImage("textFrame.png");
 
-		dialogBox = new DialogBox(this, textList, highlightList, msPerPassage,
-				textFrame);
+//		dialogBox = new DialogBox(this, textList, highlightList, msPerPassage,
+//				textFrame);
 
 
 	}
 
 	// after that big setup, now we need to display our globe
 	public void displayGlobe() {
-		for (int i = 0; i < globe.length; i++) {
-			for (int j = 0; j < globe[i].length; j++) {
-				// now we can draw a point there
-				PVector pos = globe[i][j];
-				point(pos.x, pos.y, pos.z);
+		for (int i = 0; i < globe.length-1; i++) {
+			for (int j = 0; j < globe[i].length-1; j++) {
+				// now we can draw a quadrilateral with these
+				beginShape();
+				PVector v1 = globe[i][j];
+				PVector v2 = globe[i][j+1];
+				PVector v3 = globe[i+1][j+1];
+				PVector v4 = globe[i+1][j];
+				vertex(v1.x, v1.y, v1.z);
+				vertex(v2.x, v2.y, v2.z);
+				vertex(v3.x, v3.y, v3.z);
+				vertex(v4.x, v4.y, v4.z);
+				endShape(CLOSE);
 			}
 		}
+		// this doesn't display a circle at the back, though. we'll add that
+		// in Adam.
 	}
 
 	@Override
@@ -155,10 +165,10 @@ public class metroidNetworkStation extends PApplet {
 		background(210, 100, 30, 100);
 
 		drawBlenderAxis();
-		cam.beginHUD();
-		dialogBox.draw2DTextFrame();
-		dialogBox.render();
-		cam.endHUD();
+//		cam.beginHUD();
+//		dialogBox.draw2DTextFrame();
+//		dialogBox.render();
+//		cam.endHUD();
 		// now that we've set up our globe, we can iterate through it to get
 		// points
 		displayGlobe();
