@@ -133,8 +133,8 @@ public class metroidNetworkStation extends PApplet {
 */
 		textFrame = loadImage("textFrame.png");
 
-//		dialogBox = new DialogBox(this, textList, highlightList, msPerPassage,
-//				textFrame);
+		dialogBox = new DialogBox(this, textList, highlightList, msPerPassage,
+				textFrame);
 
 
 	}
@@ -149,10 +149,35 @@ public class metroidNetworkStation extends PApplet {
 				PVector v2 = globe[i][j+1];
 				PVector v3 = globe[i+1][j+1];
 				PVector v4 = globe[i+1][j];
-				vertex(v1.x, v1.y, v1.z);
-				vertex(v2.x, v2.y, v2.z);
-				vertex(v3.x, v3.y, v3.z);
-				vertex(v4.x, v4.y, v4.z);
+				// our faces need to be oscillating. We can add a little
+				// offset for the oscillation.
+				// our average
+				PVector avg = new PVector(
+						(v1.x + v2.x + v3.x + v4.x)/4,
+						(v1.y + v2.y + v3.y + v4.y)/4,
+						(v1.z + v2.z + v3.z + v4.z)/4);
+
+				// our offset
+				double offset = dist(0, 0, avg.x, avg.z);
+
+				// and our scale factor.
+				double psf = 1 + 0.05*sin((float) (frameCount/20 + offset));
+
+				// let's multiply all of our vertices
+				// wait, now. we can't. that'll modify our globe position.
+//				v1.mult((float) psf);
+//				v2.mult((float) psf);
+//				v3.mult((float) psf);
+//				v4.mult((float) psf);
+
+				vertex((float) (v1.x*psf), (float) (v1.y*psf),
+						(float) (v1.z*psf));
+				vertex((float) (v2.x*psf), (float) (v2.y*psf),
+						(float) (v2.z*psf));
+				vertex((float) (v3.x*psf), (float) (v3.y*psf),
+						(float) (v3.z*psf));
+				vertex((float) (v4.x*psf), (float) (v4.y*psf),
+						(float) (v4.z*psf));
 				endShape(CLOSE);
 
 				// we can draw our pyramids now
@@ -160,24 +185,38 @@ public class metroidNetworkStation extends PApplet {
 				fill(184, 57, 95);
 				stroke(184, 57, 95);
 				beginShape();
-				vertex(v1.x, v1.y, v1.z);
+				vertex((float) (v1.x*psf), (float) (v1.y*psf),
+						(float) (v1.z*psf));
 				vertex(0, 0, 0);
-				vertex(v2.x, v2.y, v2.z);
+				vertex((float) (v2.x*psf), (float) (v2.y*psf),
+						(float) (v2.z*psf));
+
 				endShape(CLOSE);
 				beginShape();
-				vertex(v2.x, v2.y, v2.z);
+				vertex((float) (v2.x*psf), (float) (v2.y*psf),
+						(float) (v2.z*psf));
+
 				vertex(0, 0, 0);
-				vertex(v3.x, v3.y, v3.z);
+				vertex((float) (v3.x*psf), (float) (v3.y*psf),
+						(float) (v3.z*psf));
+
 				endShape(CLOSE);
 				beginShape();
-				vertex(v3.x, v3.y, v3.z);
+				vertex((float) (v3.x*psf), (float) (v3.y*psf),
+						(float) (v3.z*psf));
+
 				vertex(0, 0, 0);
-				vertex(v4.x, v4.y, v4.z);
+				vertex((float) (v4.x*psf), (float) (v4.y*psf),
+						(float) (v4.z*psf));
+
 				endShape(CLOSE);
 				beginShape();
-				vertex(v4.x, v4.y, v4.z);
+				vertex((float) (v4.x*psf), (float) (v4.y*psf),
+						(float) (v4.z*psf));
+
 				vertex(0, 0, 0);
-				vertex(v1.x, v1.y, v1.z);
+				vertex((float) (v1.x*psf), (float) (v1.y*psf),
+						(float) (v1.z*psf));
 				endShape(CLOSE);
 
 				// and then we should reset our fill and stroke
@@ -193,14 +232,15 @@ public class metroidNetworkStation extends PApplet {
 	public void draw() {
 		background(210, 100, 30, 100);
 
-		drawBlenderAxis();
-//		cam.beginHUD();
-//		dialogBox.draw2DTextFrame();
-//		dialogBox.render();
-//		cam.endHUD();
 		// now that we've set up our globe, we can iterate through it to get
 		// points
 		displayGlobe();
+		drawBlenderAxis();
+		cam.beginHUD();
+		fill(0, 0, 100);
+		dialogBox.draw2DTextFrame();
+		dialogBox.render();
+		cam.endHUD();
 	}
 
 	// draws our blender axis
