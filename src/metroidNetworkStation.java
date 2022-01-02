@@ -141,6 +141,8 @@ public class metroidNetworkStation extends PApplet {
 
 	// after that big setup, now we need to display our globe
 	public void displayGlobe() {
+		// our maximum r
+		int max_r = 50;
 		for (int i = 0; i < globe.length-1; i++) {
 			for (int j = 0; j < globe[i].length-1; j++) {
 				// now we can draw a quadrilateral with these
@@ -156,12 +158,22 @@ public class metroidNetworkStation extends PApplet {
 						(v1.x + v2.x + v3.x + v4.x)/4,
 						(v1.y + v2.y + v3.y + v4.y)/4,
 						(v1.z + v2.z + v3.z + v4.z)/4);
+				avg.x += 1;
+				avg.y -= 1;
+				avg.z += 1;
 
 				// our offset
 				double offset = dist(0, 0, avg.x, avg.z);
 
 				// and our scale factor.
-				double psf = 1 + 0.05*sin((float) (frameCount/20 + offset));
+
+				double psf = 1 + 0.05*sin((float) (frameCount/20.00 + offset));
+
+				// oh, by the way, if our distance is more than max r, we
+				// just set psf to 1.
+				if (offset > max_r) {
+					psf = 1;
+				}
 
 				// let's multiply all of our vertices
 				// wait, now. we can't. that'll modify our globe position.
