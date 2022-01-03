@@ -4,6 +4,8 @@ import processing.core.PFont;
 import processing.core.PImage;
 import processing.core.PVector;
 import processing.data.JSONArray;
+
+import java.awt.*;
 import java.util.ArrayList;
 
 /*
@@ -47,6 +49,9 @@ public class metroidNetworkStation extends PApplet {
 	int detail = 32;
 	int r = 100;
 	PVector[][] globe = new PVector[detail+1][detail+1];
+
+	// and we still need to get our sound ready.
+
 
 
 	public static void main(String[] args) {
@@ -158,16 +163,19 @@ public class metroidNetworkStation extends PApplet {
 						(v1.x + v2.x + v3.x + v4.x)/4,
 						(v1.y + v2.y + v3.y + v4.y)/4,
 						(v1.z + v2.z + v3.z + v4.z)/4);
-				avg.x += 1;
-				avg.y -= 1;
-				avg.z += 1;
+				avg.x += 0.1;
+				avg.y -= 0.1;
+				avg.z += 0.1;
 
 				// our offset
 				double offset = dist(0, 0, avg.x, avg.z);
+				// by the way, we figure out our mapped amplitude using our
+				// distance
+				double amp = map((float) offset, 0, max_r, (float) 0.05, 0);
 
 				// and our scale factor.
 
-				double psf = 1 + 0.05*sin((float) (frameCount/20.00 + offset));
+				double psf = 1 + amp*sin((float) (frameCount/20.00 + offset));
 
 				// oh, by the way, if our distance is more than max r, we
 				// just set psf to 1.
@@ -194,8 +202,14 @@ public class metroidNetworkStation extends PApplet {
 
 				// we can draw our pyramids now
 				// after filling with the right color
-				fill(184, 57, 95);
-				stroke(184, 57, 95);
+				// by the way, we can use a color lerp to figure out what our
+				// color should be
+				int fromColor = this.color(180, 12, 98);
+				int toColor = this.color(184, 57, 95);
+				int c = lerpColor(fromColor, toColor,
+						(float) offset/(max_r));
+				fill(c);
+				stroke(c);
 				beginShape();
 				vertex((float) (v1.x*psf), (float) (v1.y*psf),
 						(float) (v1.z*psf));
