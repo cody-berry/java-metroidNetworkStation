@@ -4,8 +4,8 @@ import processing.core.PFont;
 import processing.core.PImage;
 import processing.core.PVector;
 import processing.data.JSONArray;
+import processing.sound.*;
 
-import java.awt.*;
 import java.util.ArrayList;
 
 /*
@@ -51,6 +51,10 @@ public class metroidNetworkStation extends PApplet {
 	PVector[][] globe = new PVector[detail+1][detail+1];
 
 	// and we still need to get our sound ready.
+	SoundFile adam;
+	// It comes with our amplitude.
+	Amplitude amp;
+	double lastVoiceAmp = 0;
 
 
 
@@ -106,6 +110,9 @@ public class metroidNetworkStation extends PApplet {
 		JSONArray json = null;
 		loadData(json);
 		setupGlobe();
+		adam = new SoundFile(this, "adam.mp3");
+		adam.play();
+		amp = new Amplitude(this);
 	}
 
 	public void loadData(JSONArray json) {
@@ -173,6 +180,9 @@ public class metroidNetworkStation extends PApplet {
 				// distance
 				double amp = map((float) offset, 0, max_r, (float) 0.05, 0);
 
+				// alright, let's doo our sound work!
+//				double currentVoiceAmp = (amp.analyze());
+
 				// and our scale factor.
 
 				double psf = 1 + amp*sin((float) (frameCount/20.00 + offset));
@@ -184,7 +194,7 @@ public class metroidNetworkStation extends PApplet {
 				}
 
 				// let's multiply all of our vertices
-				// wait, now. we can't. that'll modify our globe position.
+				// wait, no. we can't. that'll modify our globe position.
 //				v1.mult((float) psf);
 //				v2.mult((float) psf);
 //				v3.mult((float) psf);
