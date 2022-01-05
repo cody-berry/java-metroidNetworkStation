@@ -98,9 +98,9 @@ public class DialogBox {
 			currentChar++;
 		}
 		// if it has been long enough since we last advanced, we should
-		// advance now
+		// advance now, and also if we're not done with our passages
 		int advance = msPerPassage[currentIndex];
-		if (app.millis() > advance + lastAdvanced) {
+		if (app.millis() > advance + lastAdvanced && currentIndex < textList.length-1) {
 			currentIndex++;
 			currentChar = 0;
 			lastAdvanced = app.millis();

@@ -55,6 +55,8 @@ public class metroidNetworkStation extends PApplet {
 	// It comes with our amplitude.
 	Amplitude amp;
 	double lastVoiceAmp = 0;
+	// ...and an audio in.
+	AudioIn in;
 
 
 
@@ -113,6 +115,9 @@ public class metroidNetworkStation extends PApplet {
 		adam = new SoundFile(this, "adam.mp3");
 		adam.play();
 		amp = new Amplitude(this);
+		in = new AudioIn(this, 0);
+		in.start();
+		amp.input(in);
 	}
 
 	public void loadData(JSONArray json) {
@@ -158,6 +163,8 @@ public class metroidNetworkStation extends PApplet {
 		for (int i = 0; i < globe.length-1; i++) {
 			for (int j = 0; j < globe[i].length-1; j++) {
 				// now we can draw a quadrilateral with these
+
+				noStroke();
 				beginShape();
 				PVector v1 = globe[i][j];
 				PVector v2 = globe[i][j+1];
@@ -180,8 +187,15 @@ public class metroidNetworkStation extends PApplet {
 				// distance
 				double amp = map((float) offset, 0, max_r, (float) 0.05, 0);
 
-				// alright, let's doo our sound work!
-//				double currentVoiceAmp = (amp.analyze());
+				// alright, let's doo our sound work! precision of 4 decimal
+				// points
+				double currentVoiceAmp = (amp + lastVoiceAmp)/2.0000;
+				lastVoiceAmp = currentVoiceAmp;
+
+				currentVoiceAmp =
+						25*map((float) currentVoiceAmp, -0.3F, 0F, 0, 1)/(pow((float) offset,
+								(float) 1.9));
+				System.out.println(currentVoiceAmp);
 
 				// and our scale factor.
 
@@ -191,6 +205,53 @@ public class metroidNetworkStation extends PApplet {
 				// just set psf to 1.
 				if (offset > max_r) {
 					psf = 1;
+				} else {
+
+
+					// we can draw our pyramids now
+					// after filling with the right color
+					// by the way, we can use a color lerp to figure out what our
+					// color should be
+					int fromColor = this.color(180, 12, 98);
+					int toColor = this.color(184, 57, 95);
+					int c = lerpColor(fromColor, toColor,
+							(float) offset/(max_r));
+					fill(c);
+					stroke(c);
+					beginShape();
+					vertex((float) (v1.x*psf), (float) (v1.y*psf),
+							(float) (v1.z*psf));
+					vertex(0, 0, 0);
+					vertex((float) (v2.x*psf), (float) (v2.y*psf),
+							(float) (v2.z*psf));
+
+					endShape(CLOSE);
+					beginShape();
+					vertex((float) (v2.x*psf), (float) (v2.y*psf),
+							(float) (v2.z*psf));
+
+					vertex(0, 0, 0);
+					vertex((float) (v3.x*psf), (float) (v3.y*psf),
+							(float) (v3.z*psf));
+
+					endShape(CLOSE);
+					beginShape();
+					vertex((float) (v3.x*psf), (float) (v3.y*psf),
+							(float) (v3.z*psf));
+
+					vertex(0, 0, 0);
+					vertex((float) (v4.x*psf), (float) (v4.y*psf),
+							(float) (v4.z*psf));
+
+					endShape(CLOSE);
+					beginShape();
+					vertex((float) (v4.x*psf), (float) (v4.y*psf),
+							(float) (v4.z*psf));
+
+					vertex(0, 0, 0);
+					vertex((float) (v1.x*psf), (float) (v1.y*psf),
+							(float) (v1.z*psf));
+					endShape(CLOSE);
 				}
 
 				// let's multiply all of our vertices
@@ -200,63 +261,20 @@ public class metroidNetworkStation extends PApplet {
 //				v3.mult((float) psf);
 //				v4.mult((float) psf);
 
-				vertex((float) (v1.x*psf), (float) (v1.y*psf),
-						(float) (v1.z*psf));
-				vertex((float) (v2.x*psf), (float) (v2.y*psf),
-						(float) (v2.z*psf));
-				vertex((float) (v3.x*psf), (float) (v3.y*psf),
-						(float) (v3.z*psf));
-				vertex((float) (v4.x*psf), (float) (v4.y*psf),
-						(float) (v4.z*psf));
-				endShape(CLOSE);
-
-				// we can draw our pyramids now
-				// after filling with the right color
-				// by the way, we can use a color lerp to figure out what our
-				// color should be
-				int fromColor = this.color(180, 12, 98);
-				int toColor = this.color(184, 57, 95);
-				int c = lerpColor(fromColor, toColor,
-						(float) offset/(max_r));
-				fill(c);
-				stroke(c);
-				beginShape();
-				vertex((float) (v1.x*psf), (float) (v1.y*psf),
-						(float) (v1.z*psf));
-				vertex(0, 0, 0);
-				vertex((float) (v2.x*psf), (float) (v2.y*psf),
-						(float) (v2.z*psf));
-
-				endShape(CLOSE);
-				beginShape();
-				vertex((float) (v2.x*psf), (float) (v2.y*psf),
-						(float) (v2.z*psf));
-
-				vertex(0, 0, 0);
-				vertex((float) (v3.x*psf), (float) (v3.y*psf),
-						(float) (v3.z*psf));
-
-				endShape(CLOSE);
-				beginShape();
-				vertex((float) (v3.x*psf), (float) (v3.y*psf),
-						(float) (v3.z*psf));
-
-				vertex(0, 0, 0);
-				vertex((float) (v4.x*psf), (float) (v4.y*psf),
-						(float) (v4.z*psf));
-
-				endShape(CLOSE);
-				beginShape();
-				vertex((float) (v4.x*psf), (float) (v4.y*psf),
-						(float) (v4.z*psf));
-
-				vertex(0, 0, 0);
-				vertex((float) (v1.x*psf), (float) (v1.y*psf),
-						(float) (v1.z*psf));
-				endShape(CLOSE);
-
 				// and then we should reset our fill and stroke
 				fill(210, 100, 20);
+				// increase our psf by a tiny bit
+				psf += 1;
+
+				vertex((float) (v1.x*psf), (float) (v1.y*psf),
+						(float) (v1.z*psf));
+				vertex((float) (v2.x*psf), (float) (v2.y*psf),
+						(float) (v2.z*psf));
+				vertex((float) (v3.x*psf), (float) (v3.y*psf),
+						(float) (v3.z*psf));
+				vertex((float) (v4.x*psf), (float) (v4.y*psf),
+						(float) (v4.z*psf));
+				endShape(CLOSE);
 			}
 		}
 		// this doesn't display a circle at the back, though. we'll add that
@@ -277,6 +295,12 @@ public class metroidNetworkStation extends PApplet {
 		dialogBox.draw2DTextFrame();
 		dialogBox.render();
 		cam.endHUD();
+	}
+
+	// draws 2 toruses around Adam
+	public void drawTorus() {
+		translate(0, 0, -5);
+		fill(0, 0, 100);
 	}
 
 	// draws our blender axis
