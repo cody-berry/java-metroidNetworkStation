@@ -46,16 +46,16 @@ public class metroidNetworkStation extends PApplet {
 	// ...we still need to do our spherical things.
 	// let's set up our globe, our detail, and our radius.
 
-	int detail = 50;
-	int r = 100;
+	int detail = 30;
+	int r = 125;
 	PVector[][] globe = new PVector[detail+1][detail+1];
 
 	// and we still need to get our sound ready.
 	SoundFile adam;
 	// It comes with our amplitude.
-	Amplitude amp;
-	double lastVoiceAmp = 0;
-	double currentVoiceAmp;
+	Amplitude javaAmp;
+	double[][] lastVoiceAmp = new double[detail+1][detail+1];
+	double[][] currentVoiceAmp = new double[detail+1][detail+1];
 	// ...and an audio in.
 	AudioIn in;
 
@@ -115,10 +115,10 @@ public class metroidNetworkStation extends PApplet {
 		setupGlobe();
 		adam = new SoundFile(this, "adam.mp3");
 		adam.play();
-		amp = new Amplitude(this);
+		javaAmp = new Amplitude(this);
 		in = new AudioIn(this, 0);
 		in.start();
-		amp.input(in);
+		javaAmp.input(in);
 	}
 
 	public void loadData(JSONArray json) {
@@ -155,7 +155,7 @@ public class metroidNetworkStation extends PApplet {
 	// after that big setup, now we need to display our globe
 	public void displayGlobe() {
 		// our maximum r
-		int max_r = 40;
+		int max_r = 80;
 		for (int i = 0; i < globe.length-1; i++) {
 			for (int j = 0; j < globe[i].length-1; j++) {
 				// now we can draw a quadrilateral with these
@@ -184,22 +184,20 @@ public class metroidNetworkStation extends PApplet {
 
 				// alright, let's doo our sound work! precision of 4 decimal
 				// points
-				currentVoiceAmp = (amp + lastVoiceAmp)/2.0000;
-				lastVoiceAmp = currentVoiceAmp;
+				currentVoiceAmp[i][j] =
+						(javaAmp.analyze()*100 + lastVoiceAmp[i][j])/2.0000;
+				lastVoiceAmp[i][j] = currentVoiceAmp[i][j];
 
-				currentVoiceAmp =
-						map((float) currentVoiceAmp, -1000F, 2F, 0,
+				currentVoiceAmp[i][j] =
+						map((float) currentVoiceAmp[i][j], -100F, 100F, 0,
 								30)/(pow((float) offset,
 								(float) 1.9));
 
 				// and our scale factor.
 
 				double psf =
-						1 + amp*sin((float) (frameCount/20.00 + offset)) - constrain((int) currentVoiceAmp, 0, 30)/100.000000000000000;
+						1 + amp*sin((float) (frameCount/20.00 + offset)) - constrain((int) currentVoiceAmp[i][j], 0, 30)/100.000000000000000;
 				psf = map((float) psf, 0.2f, 1, 0.5f, 1);
-				if (frameCount % 60 == 0) {
-					System.out.println(psf);
-				}
 
 				// oh, by the way, if our distance is more than max r, we
 				// just set psf to 1.
@@ -279,6 +277,36 @@ public class metroidNetworkStation extends PApplet {
 		// this doesn't display a circle at the back, though. we'll add that
 		// in Adam.
 
+		cam.beginHUD();
+		fill(0, 0, 100);
+		noStroke();
+		text(javaAmp.analyze()*100, 80,
+				height/2-30);
+		text(String.format("%.7f",currentVoiceAmp[detail/2][detail/2])+"⭠",
+				width/2,
+				height/2-20);
+		text(String.format("%.7f",currentVoiceAmp[detail/2-1][detail/2])+"⭠",
+				width/2,
+				height/2-10);
+		text(String.format("%.7f",currentVoiceAmp[detail/2-1][detail/2-1])+"⭠",
+				width/2,
+				height/2);
+		text(String.format("%.7f",currentVoiceAmp[detail/2][detail/2-1])+"⭠",
+				width/2,
+				height/2+10);
+		text(String.format("%.7f",lastVoiceAmp[detail/2][detail/2])+"⭠",
+				width/2+100,
+				height/2-20);
+		text(String.format("%.7f",lastVoiceAmp[detail/2-1][detail/2])+"⭠",
+				width/2+100,
+				height/2-10);
+		text(String.format("%.7f",lastVoiceAmp[detail/2-1][detail/2-1])+"⭠",
+				width/2+100,
+				height/2);
+		text(String.format("%.7f",lastVoiceAmp[detail/2][detail/2-1])+"⭠",
+				width/2+100,
+				height/2+10);
+		cam.endHUD();
 	}
 
 	@Override
