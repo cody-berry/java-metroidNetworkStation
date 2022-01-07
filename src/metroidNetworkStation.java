@@ -46,7 +46,7 @@ public class metroidNetworkStation extends PApplet {
 	// ...we still need to do our spherical things.
 	// let's set up our globe, our detail, and our radius.
 
-	int detail = 32;
+	int detail = 50;
 	int r = 100;
 	PVector[][] globe = new PVector[detail+1][detail+1];
 
@@ -55,6 +55,7 @@ public class metroidNetworkStation extends PApplet {
 	// It comes with our amplitude.
 	Amplitude amp;
 	double lastVoiceAmp = 0;
+	double currentVoiceAmp;
 	// ...and an audio in.
 	AudioIn in;
 
@@ -143,11 +144,6 @@ public class metroidNetworkStation extends PApplet {
 			}
 			highlightList.add(lst);
 		}
-/*
-		for (int[][] h : highlightList) {
-			System.out.println(Arrays.deepToString(h));
-		}
-*/
 		textFrame = loadImage("textFrame.png");
 
 		dialogBox = new DialogBox(this, textList, highlightList, msPerPassage,
@@ -159,13 +155,12 @@ public class metroidNetworkStation extends PApplet {
 	// after that big setup, now we need to display our globe
 	public void displayGlobe() {
 		// our maximum r
-		int max_r = 50;
+		int max_r = 40;
 		for (int i = 0; i < globe.length-1; i++) {
 			for (int j = 0; j < globe[i].length-1; j++) {
 				// now we can draw a quadrilateral with these
 
 				noStroke();
-				beginShape();
 				PVector v1 = globe[i][j];
 				PVector v2 = globe[i][j+1];
 				PVector v3 = globe[i+1][j+1];
@@ -189,17 +184,22 @@ public class metroidNetworkStation extends PApplet {
 
 				// alright, let's doo our sound work! precision of 4 decimal
 				// points
-				double currentVoiceAmp = (amp + lastVoiceAmp)/2.0000;
+				currentVoiceAmp = (amp + lastVoiceAmp)/2.0000;
 				lastVoiceAmp = currentVoiceAmp;
 
 				currentVoiceAmp =
-						25*map((float) currentVoiceAmp, -0.3F, 0F, 0, 1)/(pow((float) offset,
+						map((float) currentVoiceAmp, -1000F, 2F, 0,
+								30)/(pow((float) offset,
 								(float) 1.9));
-				System.out.println(currentVoiceAmp);
 
 				// and our scale factor.
 
-				double psf = 1 + amp*sin((float) (frameCount/20.00 + offset));
+				double psf =
+						1 + amp*sin((float) (frameCount/20.00 + offset)) - constrain((int) currentVoiceAmp, 0, 30)/100.000000000000000;
+				psf = map((float) psf, 0.2f, 1, 0.5f, 1);
+				if (frameCount % 60 == 0) {
+					System.out.println(psf);
+				}
 
 				// oh, by the way, if our distance is more than max r, we
 				// just set psf to 1.
@@ -224,18 +224,15 @@ public class metroidNetworkStation extends PApplet {
 					vertex(0, 0, 0);
 					vertex((float) (v2.x*psf), (float) (v2.y*psf),
 							(float) (v2.z*psf));
-
-					endShape(CLOSE);
-					beginShape();
+					vertex((float) (v1.x*psf), (float) (v1.y*psf),
+							(float) (v1.z*psf));
 					vertex((float) (v2.x*psf), (float) (v2.y*psf),
 							(float) (v2.z*psf));
-
 					vertex(0, 0, 0);
 					vertex((float) (v3.x*psf), (float) (v3.y*psf),
 							(float) (v3.z*psf));
-
-					endShape(CLOSE);
-					beginShape();
+					vertex((float) (v2.x*psf), (float) (v2.y*psf),
+							(float) (v2.z*psf));
 					vertex((float) (v3.x*psf), (float) (v3.y*psf),
 							(float) (v3.z*psf));
 
@@ -263,8 +260,10 @@ public class metroidNetworkStation extends PApplet {
 
 				// and then we should reset our fill and stroke
 				fill(210, 100, 20);
+				noStroke();
 				// increase our psf by a tiny bit
-				psf += 1;
+				psf += 0.01;
+				beginShape();
 
 				vertex((float) (v1.x*psf), (float) (v1.y*psf),
 						(float) (v1.z*psf));
