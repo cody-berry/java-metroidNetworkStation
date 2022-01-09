@@ -189,14 +189,14 @@ public class metroidNetworkStation extends PApplet {
 				lastVoiceAmp[i][j] = currentVoiceAmp[i][j];
 
 				currentVoiceAmp[i][j] =
-						map((float) currentVoiceAmp[i][j], -100F, 100F, 0,
+						map((float) currentVoiceAmp[i][j], 0, 0.22F, 0,
 								30)/(pow((float) offset,
 								(float) 1.9));
 
 				// and our scale factor.
 
 				double psf =
-						1 + amp*sin((float) (frameCount/20.00 + offset)) - constrain((int) currentVoiceAmp[i][j], 0, 30)/100.000000000000000;
+						1 + amp*sin((float) (frameCount/20.00 + offset)) - constrain(((int) (currentVoiceAmp[i][j]*100)), 0, 30)/100.00000000;
 				psf = map((float) psf, 0.2f, 1, 0.5f, 1);
 
 				// oh, by the way, if our distance is more than max r, we
@@ -233,11 +233,9 @@ public class metroidNetworkStation extends PApplet {
 							(float) (v2.z*psf));
 					vertex((float) (v3.x*psf), (float) (v3.y*psf),
 							(float) (v3.z*psf));
-
 					vertex(0, 0, 0);
 					vertex((float) (v4.x*psf), (float) (v4.y*psf),
 							(float) (v4.z*psf));
-
 					endShape(CLOSE);
 					beginShape();
 					vertex((float) (v4.x*psf), (float) (v4.y*psf),
